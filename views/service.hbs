@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/fonts.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/elementStyles.css">
+    <link rel="stylesheet" href="../css/service.css">
+</head>
+
+<body>
+    {{> header}}
+    <main class="service">
+        <div class="container">
+            <div class="service__inner">
+                {{#each service}}
+                <img src="{{this.Image}}">
+                <h1> {{this.Title}} </h1>
+                <div>
+                    {{this.Description}}
+                </div>
+                <button class="red-round-button" id="{{this.idService}}">Оставить заявку</button>
+                {{/each}}
+            </div>
+        </div>
+    </main>
+     <div class="poup" id="popup">
+      <div class="container">
+        <div class="poup__inner" id="poup__inner">
+          <div class="first">
+            <div class="title font-montserrat-light font-size-18 ln-height-34">
+              Оставить заявку
+            </div>
+            <img src="../images/cancel.svg" alt="close" id="close_popup" />
+          </div>
+          <input
+            type="text"
+            required="required"
+            name="Введите имя"
+            placeholder="Введите имя"
+            autocomplete="off"
+            id="name"
+          />
+          <input
+            type="email"
+            required="required"
+            name="Введите E-mail"
+            placeholder="mail@mail.ru"
+            autocomplete="off"
+            id="email"
+          />
+          <button
+            class="red-round-button white-color font-montserrat-light font-size-18 width-350 height-50"
+
+            id="leaveOrder"
+          >
+            Запустить рекламу
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../js/popup.js"></script>
+    <script src="../js/service.js"></script>
+    
+</body>
+
+</html>

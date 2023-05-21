@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const hbs = require("hbs");
 
 const fs = require("fs");
 
@@ -9,6 +10,10 @@ const mysql = require("mysql2");
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname + '/public'));
+
+app.set("view engine", "hbs");
+hbs.registerPartials(__dirname + "/views/partials/");
 
 // create the connection to database
 const pool = mysql.createPool({
@@ -34,51 +39,101 @@ const pool = mysql.createPool({
 
 const promisePool = pool.promise();
 
-app.get("/createService", async (req, res) => {
-    try {
-        // const data = fs.readFileSync("./img/vk.png")
 
-        // await promisePool.execute(
-        //     "INSERT INTO `Service` (`Image`, `Title`, `Description`) VALUES (?,'Реклама Вконтакте','Текст')", [data]
-        // );
+hbs.registerHelper("ifEquals", (arg1, arg2, options) => {
 
+    return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
+})
 
-    } catch (error) {
-        console.log(error);
+app.get("/services", async (req, res) => {
+
+    const [service] = await promisePool.execute("SELECT * FROM `Service`");
+
+    for (let i = 0; i < service.length; i++) {
+        if (service[i]?.Image) {
+            service[i].Image = "data:image/png;base64," + Buffer.from(service[i].Image).toString("base64")
+        }
     }
-});
+
+    res.render("services.hbs", {
+        service
+    })
+})
 
 
-app.get("/tablesName", async (req, res) => {
+app.get("/service/:id", async (req, res) => {
     try {
-        const [names] = await promisePool.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'boeejsqyv4gxfs7gshhn'");
+        const { id } = req.params;
 
+        const [service] = await promisePool.execute("SELECT * FROM `Service` WHERE idService = ?", [id]);
 
-        res.send(names).status(200);
+        for (let i = 0; i < service.length; i++) {
+            if (service[i]?.Image) {
+                service[i].Image = "data:image/png;base64," + Buffer.from(service[i].Image).toString("base64")
+            }
+        }
+
+        res.render("service.hbs", {
+            service
+        })
+    } catch (error) {
+
+    }
+
+})
+
+app.post("/createOrder", async (req, res) => {
+    try {
+        const { name, email } = req.body;
+
+        const [user] = await promisePool.execute("INSERT INTO `User` (`Name`, `Email`) VALUES(?,?)", [name, email]);
+
+        res.sendStatus(200);
     } catch (error) {
         console.log(error);
     }
 })
+
+//template
+app.get("/tablesName", async (req, res) => {
+    try {
+        const [names] = await promisePool.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'boeejsqyv4gxfs7gshhn'");
+
+        res.render("admin.hbs", {
+            names
+        });
+    } catch (error) {
+
+    }
+});
 
 app.get("/tableColumns/:name", async (req, res) => {
     try {
         const { name } = req.params;
 
-        const [columns] = await promisePool.execute("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?", [name]);
-
-        res.send(columns).status(200);
-    } catch (error) {
-        console.log(error);
-    }
-})
-
-app.get("/tableData/:name", async (req, res) => {
-    try {
-        const { name } = req.params;
+        const [columns] = await promisePool.execute("SELECT COLUMN_NAME, COLUMN_KEY, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?", [name]);
 
         const [data] = await promisePool.execute("SELECT * FROM `" + name + "`");
 
-        res.send(data).status(200);
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i]?.Image) {
+                data[i].Image = "data:image/png;base64," + Buffer.from(data[i].Image).toString("base64")
+            }
+        }
+
+        // console.log(columns);
+
+        const colum = columns.map((column) => column.COLUMN_NAME);
+        const primaryKey = columns.find((colum) => { if (colum.COLUMN_KEY === 'PRI') { return colum } }).COLUMN_NAME
+
+        res.render("table.hbs", {
+            columns: colum,
+            columnsDataType: columns,
+            data: data,
+            tableName: name,
+            primaryKey
+        });
     } catch (error) {
         console.log(error);
     }
@@ -114,7 +169,7 @@ app.post("/tableAdd/:name", async (req, res) => {
                 }
             }
         }
-        
+
 
         const query =
             "INSERT INTO " +
@@ -126,17 +181,113 @@ app.post("/tableAdd/:name", async (req, res) => {
             ")";
 
         pool.getConnection((err, connection) => {
-            connection.query(query, { bufferValue }, (err, res, fields) => {
-                if (err) throw err;
+            connection.query(query, { bufferValue }, (err, respond, fields) => {
+                if (!respond) {
+                    res.sendStatus(304);
+
+                } else {
+                    res.sendStatus(200);
+                }
                 pool.releaseConnection(connection);
             });
         });
 
-        res.sendStatus(200);
     } catch (error) {
         console.log(error);
     }
 })
+
+app.post("/tableChangeData/:name", async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        let { columnsName, data, field, id } = req.body;
+
+        columnsName = columnsName.map((name) => "`" + name + "`");
+        data = data.map((value) => `'${value}'`);
+
+        let set = " SET ";
+
+        let bufferValue;
+
+        for (let i = 0; i < columnsName.length; i++) {
+            if (i + 1 < columnsName.length) {
+                if (columnsName[i] === "`Image`") {
+                    bufferValue = Buffer.from(data[i], "base64");
+                    set += columnsName[i] + "=" + `BINARY(:bufferValue)` + ",";
+                } else {
+                    set += columnsName[i] + "=" + data[i] + ",";
+                }
+            } else {
+                if (columnsName[i] === "`Image`") {
+                    bufferValue = Buffer.from(data[i], "base64");
+                    set += columnsName[i] + "=" + `BINARY(:bufferValue)`;
+                } else {
+                    set += columnsName[i] + "=" + data[i];
+                }
+            }
+        }
+
+        const query =
+            "UPDATE " +
+            name +
+            set +
+            " WHERE " +
+            "`" +
+            `${field}` +
+            "`" +
+            "=" +
+            `'${id}'`;
+        pool.getConnection((err, connection) => {
+            connection.query(query, { bufferValue }, (err, respond, fields) => {
+                if (err) throw err;
+                if (respond.affectedRows === 0) {
+                    res.sendStatus(404)
+                } else {
+                    res.sendStatus(200);
+                }
+                pool.releaseConnection(connection);
+            });
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+});
+
+app.post("/tableDeleteData/:name", async (req, res) => {
+    try {
+        const { name } = req.params;
+
+        const { field, id } = req.body;
+
+        const query =
+            "DELETE FROM " +
+            name +
+            " WHERE " +
+            "`" +
+            `${field}` +
+            "`" +
+            "=" +
+            `${id}`;
+        pool.getConnection((err, connection) => {
+            connection.query(query, (err, respond, fields) => {
+                if (err) {
+                    // console.log(err);
+                    res.sendStatus(304);
+                } else {
+                    res.sendStatus(200);
+                }
+                pool.releaseConnection(connection);
+            });
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.sendStatus(500);
+    }
+});
 
 app.listen(4000, () => {
     console.log("Server is waiting");

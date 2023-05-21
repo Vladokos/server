@@ -1,0 +1,87 @@
+:root {
+  --main-color: #ba8275;
+  --second-color: #000;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  color: var(--second-color);
+
+  font-family: Montserrat;
+}
+
+.main_container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 0 10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.main_container h1 {
+  width: 100vw;
+  background: #a8a8a8;
+  text-align: center;
+  color: var(--second-color);
+  font-weight: 500;
+  font-size: calc(22px + 16 * (100vw / 1728));
+  line-height: calc(20px + 16 * (100vw / 1728));
+  letter-spacing: 0.03em;
+
+  padding: 40px 0;
+  margin-bottom: 100px;
+}
+
+.main_container ul {
+  display: flex;
+  justify-content: center;
+  column-gap: calc(16px + 74 * (100vw / 1728));
+}
+
+.main_container ul li a {
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+  color: #000;
+  font-weight: 400;
+  font-size: calc(16px + 16 * (100vw / 1728));
+  line-height: calc(12px + 12 * (100vw / 1728));
+  letter-spacing: 0.03em;
+
+  transition: 0.15s all linear;
+}
+
+.main_container ul li a:after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 0;
+  bottom: -3px;
+  width: 0;
+  height: 2px;
+  background-color: #CA2D2A;
+  transition: width 0.4s;
+}
+
+.main_container ul li a:hover:after {
+  content: "";
+  width: 100%;
+  display: block;
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  background-color: #CA2D2A;
+  transition: width 0.4s;
+}
