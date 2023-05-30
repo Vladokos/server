@@ -16,13 +16,13 @@
     <script>
         const user = localStorage.getItem("user");
         if (!user) {
-            window.location.replace('http://localhost:4000/services');
+            window.location.replace('https://server-bp9a.onrender.com/services');
 
         } else {
             const link = window.location.href.split("/");
 
             if (user !== link[link.length - 1]) {
-                window.location.replace('http://localhost:4000/services');
+                window.location.replace('https://server-bp9a.onrender.com/services');
             }
         }
     </script>
@@ -43,7 +43,7 @@
                         <input type="text" value={{this.Email}} readonly>
                         {{/each}}
                         <button
-                            onclick="localStorage.clear();  window.location.replace('http://localhost:4000/services');">Выйти</button>
+                            onclick="localStorage.clear();  window.location.replace('https://server-bp9a.onrender.com/services');">Выйти</button>
                     </div>
                     <div class="rightSide">
                         <span>Ваши заявки:</span>

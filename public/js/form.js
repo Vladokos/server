@@ -14,7 +14,7 @@ log?.addEventListener("click", () => {
             if (res.status === 200) {
                 alert("Успешно");
                 localStorage.setItem("user", email.value)
-                window.location.href = "http://localhost:4000/services";
+                window.location.href = "https://server-bp9a.onrender.com/services";
             }
         })
     } else {
@@ -37,7 +37,7 @@ reg?.addEventListener("click", () => {
             if (res.status === 200) {
                 alert("Успешно");
                 localStorage.setItem("user", email.value)
-                window.location.href = "http://localhost:4000/services";
+                window.location.href = "https://server-bp9a.onrender.com/services";
             }
         })
     } else {

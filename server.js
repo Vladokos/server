@@ -77,7 +77,7 @@ app.get("/profile/:id", async (req, res) => {
                 if (service[0]?.Image) {
                     service[0].Image = "data:image/png;base64," + Buffer.from(service[0].Image).toString("base64")
                 }
-                
+
                 const date = new Date(order[i].date)
                 const formatted = new Intl.DateTimeFormat('en-US').format(date);
                 const serviceObject = {
@@ -98,7 +98,7 @@ app.get("/profile/:id", async (req, res) => {
 
             })
 
-            
+
         }
 
 
@@ -193,8 +193,10 @@ app.post("/enterUser", async (req, res) => {
         const { email, password } = req.body;
 
         const [user] = await promisePool.execute("SELECT * FROM `User` WHERE Email = ?", [email]);
-        
-        res.sendStatus(200);
+        if (user.length > 0) {
+
+            res.sendStatus(200);
+        }
     } catch (error) {
 
     }

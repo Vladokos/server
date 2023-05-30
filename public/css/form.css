@@ -1,23 +1,128 @@
-body{
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-
-    font-family: Montserrat;
-    font-size: 20px;
-    font-weight: bold;
+::-webkit-input-placeholder {
+  color: #424242;
+  opacity: 0.6;
+}
+:-moz-placeholder {
+  color: #424242;
+  opacity: 0.6;
+}
+::-moz-placeholder {
+  color: #424242;
+  opacity: 0.6;
+}
+:-ms-input-placeholder {
+  color: #424242;
+  opacity: 0.6;
+}
+::-ms-input-placeholder {
+  color: #424242;
+  opacity: 0.6;
 }
 
-.main__inner > div {
-    display: flex;
-    flex-direction: column;
-
-    gap: 30px;
+::placeholder {
+  color: #424242;
+  opacity: 0.6;
 }
 
-h1{
-    align-self: center;
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  background: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Montserrat;
+  height: 100vh;
+}
+
+.main {
+  padding: 0 10px;
+}
+
+.main_container {
+  padding: 40px;
+  border: 2px solid #ca2d2a;
+  border-radius: 2rem;
+}
+
+.main_container h1 {
+  color: #ca2d2a;
+  font-size: 22px;
+  text-align: center;
+  margin: 30px 0;
+  letter-spacing: 0.05em;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+}
+
+.form input {
+  padding: 10px 100px 10px 10px;
+  background: rgba(66, 66, 66, 0.06);
+  border: none;
+  border-radius: 2rem;
+  border-bottom: 1px solid transparent;
+  position: relative;
+  font-family: Montserrat;
+
+  transition: 0.5s all linear;
+}
+
+.form input:focus {
+  -webkit-box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+  -moz-box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+  box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+}
+
+.form button {
+  margin-top: 20px;
+  border: 1px solid #ca2d2a;
+  border-radius: 2rem;
+  outline: none;
+  padding: 16px 0;
+  background: #ca2d2a;
+  color: #f8f8f8;
+  letter-spacing: 0.03em;
+  font-family: Montserrat;
+
+  transition: 0.3s all linear;
+}
+
+.form button:hover {
+  background: transparent;
+  color: #ca2d2a;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.form a {
+  margin-bottom: 30px;
+  text-align: center;
+  text-decoration: none;
+  color: #424242;
+
+  transition: 0.15s all linear;
+}
+
+.form a:hover {
+  color: #ca2d2a;
+}
+
+@media (max-width: 575px) {
+  .form input {
+    padding: 10px 0 10px 10px;
+  }
 }
