@@ -280,14 +280,14 @@ app.post("/tableAdd/:name", async (req, res) => {
 
 
         const query =
-            "INSERT INTO " +
+            "INSERT INTO `" +
             name +
-            "(" +
+            "`(" +
             columnsName.join(",") +
             ") VALUES(" +
             set +
             ")";
-
+        // await promisePool.execute(query);
         pool.getConnection((err, connection) => {
             connection.query(query, { bufferValue }, (err, respond, fields) => {
                 if (!respond) {
@@ -337,8 +337,8 @@ app.post("/tableChangeData/:name", async (req, res) => {
         }
 
         const query =
-            "UPDATE " +
-            name +
+            "UPDATE `" +
+            name + "`" +
             set +
             " WHERE " +
             "`" +
@@ -371,9 +371,9 @@ app.post("/tableDeleteData/:name", async (req, res) => {
         const { field, id } = req.body;
 
         const query =
-            "DELETE FROM " +
+            "DELETE FROM `" +
             name +
-            " WHERE " +
+            "` WHERE " +
             "`" +
             `${field}` +
             "`" +
