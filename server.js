@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const hbs = require("hbs");
+const dateTime = require('node-datetime');
 
 const fs = require("fs");
 
@@ -60,6 +61,69 @@ app.get("/services", async (req, res) => {
     })
 })
 
+app.get("/profile/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (id === "null") {
+            res.redirect("/registration")
+        } else {
+            const [user] = await promisePool.execute("SELECT * FROM `User` WHERE `Email` = ?", [id]);
+            const [order] = await promisePool.execute("SELECT * FROM `Order` WHERE `idUser` = ?", [user[0].idUser]);
+            const services = [];
+            for (let i = 0; i < order.length; i++) {
+                const [service] = await promisePool.execute("SELECT * FROM `Service` WHERE `idService` = ?", [order[i].idService]);
+
+                if (service[0]?.Image) {
+                    service[0].Image = "data:image/png;base64," + Buffer.from(service[0].Image).toString("base64")
+                }
+                
+                const date = new Date(order[i].date)
+                const formatted = new Intl.DateTimeFormat('en-US').format(date);
+                const serviceObject = {
+                    image: service[0].Image,
+                    title: service[0].Title,
+                    date: formatted,
+                    status: order[i].status
+                }
+
+                services.push(
+                    serviceObject
+                )
+
+            }
+            res.render("profile.hbs", {
+                user,
+                services
+
+            })
+
+            
+        }
+
+
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+app.get("/registration", async (req, res) => {
+    try {
+        res.render("registration.hbs");
+    } catch (error) {
+        console.log(error);
+    }
+})
+
+app.get("/login", async (req, res) => {
+    try {
+
+        res.render("login.hbs")
+
+    } catch (error) {
+        console.log(error);
+    }
+})
 
 app.get("/service/:id", async (req, res) => {
     try {
@@ -84,13 +148,55 @@ app.get("/service/:id", async (req, res) => {
 
 app.post("/createOrder", async (req, res) => {
     try {
-        const { name, email } = req.body;
+        const { name, email, idOrder } = req.body;
 
-        const [user] = await promisePool.execute("INSERT INTO `User` (`Name`, `Email`) VALUES(?,?)", [name, email]);
+        var dt = dateTime.create();
+        var formatted = dt.format('Y-m-d H:M:S');
+
+        const [duplicateUser] = await promisePool.execute("SELECT * FROM `User` WHERE `Email` = ?", [email]);
+
+        if (duplicateUser.length === 0) {
+            const [user] = await promisePool.execute("INSERT INTO `User` (`Name`, `Email`) VALUES(?,?)", [name, email]);
+            const [order] = await promisePool.execute("INSERT INTO `Order` (`idUser`, `idService`, `date`, `status`) VALUES (?,?,?,?)", [user.insertId, idOrder, formatted, "новый"])
+        } else {
+            const [order] = await promisePool.execute("INSERT INTO `Order` (`idUser`, `idService`, `date`, `status`) VALUES (?,?,?,?)", [duplicateUser[0].idUser, idOrder, formatted, "новый"])
+        }
+
 
         res.sendStatus(200);
     } catch (error) {
         console.log(error);
+    }
+})
+
+app.post("/createUser", async (req, res) => {
+    try {
+        const { login, email, password } = req.body;
+
+        const [duplicateUser] = await promisePool.execute("SELECT * FROM `User` WHERE `Email` = ?", [email]);
+
+        if (duplicateUser.length === 0) {
+            const [user] = await promisePool.execute("INSERT INTO `User` (`Name`, `Email`, `Password`) VALUES (?,?,?)", [login, email, password]);
+            console.log(user);
+            res.sendStatus(200);
+        }
+        else {
+            res.render(500);
+        }
+    } catch (error) {
+
+    }
+});
+
+app.post("/enterUser", async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const [user] = await promisePool.execute("SELECT * FROM `User` WHERE Email = ?", [email]);
+        
+        res.sendStatus(200);
+    } catch (error) {
+
     }
 })
 
