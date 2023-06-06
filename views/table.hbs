@@ -27,7 +27,7 @@
             {{#ifEquals column "Image"}}
             <li><img src="{{lookup dat (column)}}"></li>
             {{else}}
-            <li>{{lookup dat (column)}}</li>
+            <li style="word-break: break-all;">{{lookup dat (column)}}</li>
             {{/ifEquals }}
 
             {{/each}}

@@ -42,8 +42,21 @@ const promisePool = pool.promise();
 
 
 hbs.registerHelper("ifEquals", (arg1, arg2, options) => {
-
+    if (arg2 === "primaryKey") {
+        return (arg1 === options.data.root.primaryKey) ? options.fn(this) : options.inverse(this);
+    }
     return (arg1 === arg2) ? options.fn(this) : options.inverse(this);
+})
+
+hbs.registerHelper("ifMore", (arg1, arg2, options) => {
+    return (arg1 > arg2) ? options.fn(this) : options.inverse(this);
+})
+
+//look inside object and get keys from it
+//return like keyValue1,keyValue2
+hbs.registerHelper("search", (arg1, arg2, options) => {
+    // console.log(Object.keys(arg1).join(","));
+    return Object.keys(arg1)
 })
 
 app.get("/services", async (req, res) => {
@@ -205,7 +218,7 @@ app.post("/enterUser", async (req, res) => {
 
 //template
 const translateTableName = {
-    'User': 'пользователи',
+    'User': 'Пользователи',
     'Order': 'Заявки',
     'Service': 'Услуги',
 }
@@ -263,10 +276,11 @@ app.get("/tableColumns/:name", async (req, res) => {
             if (data[i]?.Image) {
                 data[i].Image = "data:image/png;base64," + Buffer.from(data[i].Image).toString("base64")
             }
-            if (data[i]?.Date) {
-                const date = new Date(data[i].Date)
+            if (data[i]?.date) {
+                const date = new Date(data[i].date)
                 const formatted = new Intl.DateTimeFormat('en-US').format(date).split("/").reverse().join("-");
-                data[i].Date = formatted;
+                data[i].date = formatted;
+                
             }
         }
 
@@ -275,7 +289,7 @@ app.get("/tableColumns/:name", async (req, res) => {
         let colum = columns.map((column) => column.COLUMN_NAME);
 
         switch (name) {
-            case "Users":
+            case "User":
                 colum = usersTranslate;
                 for (let i = 0; i < columns.length; i++) {
                     columns[i].COLUMN_NAME = Object.keys(usersTranslate).find(key => usersTranslate[key] === columns[i].COLUMN_NAME);
@@ -402,7 +416,7 @@ app.post("/tableChangeData/:name", async (req, res) => {
         let { columnsName, data, field, id } = req.body;
 
         switch (name) {
-            case "Users":
+            case "User":
                 field = usersTranslate[field];
                 for (let i = 0; i < columnsName.length; i++) {
 
@@ -489,7 +503,7 @@ app.post("/tableDeleteData/:name", async (req, res) => {
         let { field, id } = req.body;
 
         switch (name) {
-            case "Users":
+            case "User":
                 field = usersTranslate[field];
 
                 break;
