@@ -1,32 +1,105 @@
-.data__inner{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+body {
+  font-family: Montserrat;
 }
 
-.rightSide, .leftSide{
-    display: flex;
-    flex-direction: column;
-
-    gap: 25px;
+.data__inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.rightSide{
-    align-items: center;
+.rightSide,
+.leftSide {
+  display: flex;
+  flex-direction: column;
+  font-family: Montserrat;
+
+  gap: 25px;
 }
 
-.rightSide ul{
-    display: flex;
-    flex-wrap: wrap;
-
-    gap: 100px;
+.rightSide {
+  align-items: center;
 }
 
-.rightSide ul li{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.rightSide ul {
+  display: flex;
+  flex-wrap: wrap;
 
-    gap: 25px;
+  gap: 100px;
+}
 
+.rightSide ul li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 25px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 30px;
+}
+
+.form input {
+  padding: 10px 10px 10px 10px;
+  background: rgba(66, 66, 66, 0.06);
+  border: none;
+  border-radius: 2rem;
+  border-bottom: 1px solid transparent;
+  position: relative;
+  font-family: Montserrat;
+
+  width: 110%;
+
+  transition: 0.5s all linear;
+}
+
+.form input:focus {
+  -webkit-box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+  -moz-box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+  box-shadow: 0px 14px 16px -16px rgba(66, 66, 66, 0.45);
+}
+
+.form button {
+  margin-top: 20px;
+  border: 1px solid #ca2d2a;
+  border-radius: 2rem;
+  outline: none;
+  padding: 16px 0;
+  background: #ca2d2a;
+  color: #f8f8f8;
+  letter-spacing: 0.03em;
+  font-family: Montserrat;
+
+  transition: 0.3s all linear;
+}
+
+.form button:hover {
+  background: transparent;
+  color: #ca2d2a;
+  -webkit-transform: scale(1.03);
+  -ms-transform: scale(1.03);
+  transform: scale(1.03);
+}
+
+.form a {
+  margin-bottom: 30px;
+  text-align: center;
+  text-decoration: none;
+  color: #424242;
+
+  transition: 0.15s all linear;
+}
+
+.form a:hover {
+  color: #ca2d2a;
+}
+
+@media (max-width: 575px) {
+  .form input {
+    padding: 10px 0 10px 10px;
+  }
 }

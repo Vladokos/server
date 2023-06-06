@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
+  <title>GrowUp!</title>
   <link rel="stylesheet" href="../css/reset.css">
   <link rel="stylesheet" href="../css/fonts.css">
   <link rel="stylesheet" href="../css/admin.css">
@@ -18,7 +18,7 @@
         <ul>
           {{#each names}}
           <li>
-            <a href="/tableColumns/{{this.TABLE_NAME}}">{{this.TABLE_NAME}}</a>
+            <a href="/tableColumns/{{@key}}">{{this}}</a>
           </li>
           {{/each}}
         </ul>

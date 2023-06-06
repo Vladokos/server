@@ -1,6 +1,7 @@
 const reg = document.getElementById("reg");
 const log = document.getElementById("log");
 
+console.log(process.env)
 
 log?.addEventListener("click", () => {
     const email = document.getElementById("email");

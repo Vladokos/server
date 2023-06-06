@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>GrowUp!</title>
     <link rel="stylesheet" href="../css/reset.css">
     <link rel="stylesheet" href="../css/fonts.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/elementStyles.css">
     <link rel="stylesheet" href="../css/service.css">
     <link rel="stylesheet" href="../css/profile.css">
+    
 
     <script>
         const user = localStorage.getItem("user");
@@ -35,7 +36,7 @@
         <div class="data">
             <div class="container">
                 <div class="data__inner">
-                    <div class="leftSide">
+                    <div class="leftSide form">
                         {{#each user}}
                         <span>Логин</span>
                         <input type="text" value={{this.Name}} readonly>
