@@ -92,9 +92,9 @@ app.get("/profile/:id", async (req, res) => {
                 if (service[0]?.Image) {
                     service[0].Image = "data:image/png;base64," + Buffer.from(service[0].Image).toString("base64")
                 }
-
+    
                 const date = new Date(order[i].date)
-                const formatted = new Intl.DateTimeFormat('en-US').format(date);
+                const formatted = new Intl.DateTimeFormat('ru').format(date).split(".").reverse().join("-");
                 const serviceObject = {
                     image: service[0].Image,
                     title: service[0].Title,
@@ -330,11 +330,11 @@ app.post("/tableAdd/:name", async (req, res) => {
         const { name } = req.params;
 
         let { data, columnsName } = req.body;
-
+        
         switch (name) {
-            case "Users":
+            case "User":
                 for (let i = 0; i < columnsName.length; i++) {
-
+                    
                     columnsName[i] = usersTranslate[columnsName[i]];
                 }
                 break;
@@ -353,6 +353,7 @@ app.post("/tableAdd/:name", async (req, res) => {
             default:
                 break;
         }
+
 
 
 
@@ -394,10 +395,11 @@ app.post("/tableAdd/:name", async (req, res) => {
 
         pool.getConnection((err, connection) => {
             connection.query(query, { bufferValue }, (err, respond, fields) => {
-                if (!respond) {
+                if(err){
+                    console.log(err);
                     res.sendStatus(304);
+                }else{
 
-                } else {
                     res.sendStatus(200);
                 }
                 pool.releaseConnection(connection);
@@ -546,5 +548,6 @@ app.post("/tableDeleteData/:name", async (req, res) => {
 });
 
 app.listen(4000, () => {
+    console.log('Successful connection to database ');
     console.log("Server is waiting");
 });

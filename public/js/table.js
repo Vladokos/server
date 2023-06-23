@@ -15,18 +15,16 @@ function isNumberKey(evt) {
 
 const clickedElement = (e, columns) => {
     const fields = columns.split(',');
-    // console.log(fields);
-    // const data = [];//['id','img','title','desc']
-    // console.log(e.children);
+
 
 
     for (let i = 0; i < fields.length; i++) {
         if (fields[i] === "Image" || fields[i] === "Изображение") {
-            // console.log(e.children[i].firstChild.src);'
+        
             imageFromClicked = e.children[i].firstChild.src
-            // document.getElementById(fields[i]).files[0] = e.children[i].firstChild.src;
+           
         } else {
-            // console.log(e.children[i].innerText);
+         
 
             const input = document.getElementById(fields[i]);
 
