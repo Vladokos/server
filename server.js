@@ -92,7 +92,7 @@ app.get("/profile/:id", async (req, res) => {
                 if (service[0]?.Image) {
                     service[0].Image = "data:image/png;base64," + Buffer.from(service[0].Image).toString("base64")
                 }
-    
+
                 const date = new Date(order[i].date)
                 const formatted = new Intl.DateTimeFormat('ru').format(date).split(".").reverse().join("-");
                 const serviceObject = {
@@ -208,11 +208,13 @@ app.post("/enterUser", async (req, res) => {
         const { email, password } = req.body;
 
         const [user] = await promisePool.execute("SELECT * FROM `User` WHERE Email = ?", [email]);
-        if (user.length > 0 && user.Password === password) {
+        
+        
+        if (user.length > 0 && user[0].Password === password) {
             res.sendStatus(200);
         }
     } catch (error) {
-
+        console.log(error);
     }
 })
 
@@ -280,7 +282,7 @@ app.get("/tableColumns/:name", async (req, res) => {
                 const date = new Date(data[i].date)
                 const formatted = new Intl.DateTimeFormat('en-US').format(date).split("/").reverse().join("-");
                 data[i].date = formatted;
-                
+
             }
         }
 
@@ -330,11 +332,11 @@ app.post("/tableAdd/:name", async (req, res) => {
         const { name } = req.params;
 
         let { data, columnsName } = req.body;
-        
+
         switch (name) {
             case "User":
                 for (let i = 0; i < columnsName.length; i++) {
-                    
+
                     columnsName[i] = usersTranslate[columnsName[i]];
                 }
                 break;
@@ -395,10 +397,10 @@ app.post("/tableAdd/:name", async (req, res) => {
 
         pool.getConnection((err, connection) => {
             connection.query(query, { bufferValue }, (err, respond, fields) => {
-                if(err){
+                if (err) {
                     console.log(err);
                     res.sendStatus(304);
-                }else{
+                } else {
 
                     res.sendStatus(200);
                 }
